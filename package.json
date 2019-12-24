@@ -4,9 +4,17 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index",
+    "start-serve": "http-server example/client/public",
+    "start-ping": "node example/server/server.js",
+    "build": "webpack ./example/client/src/index.js -o ./example/client/public/index.js --devtool sourcemap",
+    "build-watch": "webpack ./example/client/src/index.js -o ./example/client/public/index.js --devtool sourcemap --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel Schubert",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "webpack": "^4.41.4",
+    "webpack-cli": "^3.3.10"
+  }
 }

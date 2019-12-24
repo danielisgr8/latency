@@ -23,3 +23,5 @@ const getLatency = async (url, sampleCount) => {
 
   return times.reduce((prev, cur) => prev + cur, 0) / sampleCount;
 }
+
+export { getLatency };
