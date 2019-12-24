@@ -14,6 +14,12 @@ const getTime = (url) => {
   });
 }
 
+/**
+ * Returns the average latency from pinging the given URL the given number of times.
+ * @param {String} url The URL to ping. This should ideally have a small response size for increased accuracy.
+ * @param {Number} sampleCount The number of times to ping the given URL.
+ * @returns {Number}
+ */
 const getLatency = async (url, sampleCount) => {
   const times = new Array(sampleCount);
 
