@@ -1,8 +1,10 @@
+import { getLatency } from "./util";
+
 /**
  * @typedef SyncPacket
  * @type {Object}
  * @property {Number} time  The most up-to-date time of the server when it sent its response
- * @property {Number} delay How soon after `time` `data` should be processed
+ * @property {Number} delay How many milliseconds after `time` `data` should be processed
  * @property {any}    data  The encapsulated data that the client should receive
  */
 
@@ -11,6 +13,12 @@
  * @param {any} data
  */
 
+ /**
+  * A module that facilitates the automatic running of code at times designated by server responses.
+  * Accounts for latency in timing.
+  * 
+  * `setLatency` must be called before any `request` or `requestStream` calls are made.
+  */
 class SyncModule {
   /**
    * Constructs a new instance of `SyncModule`.
@@ -18,7 +26,16 @@ class SyncModule {
    * @param {String} pingUrl The URL to ping. This should be sent to the same server the will be used for all future requests.
    */
   constructor(pingUrl) {
+    this.pingUrl = pingUrl;
+  }
 
+  /**
+   * Sets the estimated latency between the client and server.
+   * Must be called before any requests are made from this module.
+   */
+  async setLatency() {
+    this.latency = await getLatency(this.pingUrl, 10);
+    console.log(this.latency);
   }
 
   /**
@@ -28,8 +45,26 @@ class SyncModule {
    * @param {String} url 
    * @returns {Promise<any>}
    */
-  async request(url) {
+  request(url) {
+    const req = new XMLHttpRequest();
+    req.open("GET", url);
+    req.responseType = "json";
 
+    return new Promise((resolve) => {
+      req.addEventListener("load", () => {
+        console.log(req.response);
+        const waitTime = req.response.delay - this.latency;
+
+        const timestamp = Date.now();
+        if(waitTime <= 0) resolve(req.response.data);
+        else setTimeout(() => {
+          console.log(Date.now() - timestamp);
+          resolve(req.response.data);
+        }, waitTime);
+      });
+
+      req.send();
+    });
   }
 
   /**
@@ -49,3 +84,4 @@ class SyncModule {
   }
 }
 
+export default SyncModule;

@@ -1,16 +1,25 @@
-import { getLatency } from "../../../src";
+import { SyncModule } from "../../../src";
 
-const result = document.querySelector(".result");
-const form = document.querySelector("form");
+const latencyButton = document.getElementById("setLatency");
+const requestButton = document.getElementById("sendRequest");
+const respondButton = document.getElementById("respond");
+const result = document.getElementById("result");
 
-const updateLatency = async (sampleCount) => {
-  const avg = await getLatency(`http://${window.location.hostname}:1234`, sampleCount);
-  result.textContent = `Latency: ${avg} ms`;
+const baseUrl = `http://${window.location.hostname}:1234`;
+
+const syncModule = new SyncModule(`${baseUrl}/ping`);
+
+latencyButton.onclick = async () => {
+  await syncModule.setLatency();
+  result.textContent = `Latency: ${syncModule.latency}`;
 }
 
-form.onsubmit = (e) => {
-  e.preventDefault();
+requestButton.onclick = async () => {
+  result.textContent = await syncModule.request(`${baseUrl}/data`);
+}
 
-  const sampleCount = form.elements["samples"].value;
-  updateLatency(sampleCount);
+respondButton.onclick = () => {
+  const req = new XMLHttpRequest();
+  req.open("GET", `${baseUrl}/respond`);
+  req.send();
 }

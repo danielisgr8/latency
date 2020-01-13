@@ -9,4 +9,4 @@ The `build` or `build-watch` scripts will compile the example JavaScript code. T
 
 The `start-serve` script serves the `example/client/public` folder. Navigate to `http://localhost:8080/index.html` to access the example.
 
-The `start-ping` script serves a simple ping server to `http://localhost:1234`. All requests will receive a response with a body of only "ping". This server is used by the example app.
+The `start-ping` script serves a simple ping server to `http://localhost:1234`. This server is used by the example app.
